@@ -19,6 +19,9 @@
 -keep class com.jam1nion.j4msec.features.securesharedprefs.SecureStrongSharedPrefsManager { *; }
 -keep class com.jam1nion.j4msec.features.tamperdetection.TamperDetectionManager { *; }
 -keep class com.jam1nion.j4msec.features.virtualdevicedetection.VirtualDeviceDetectionManager { *; }
+-keep class com.jam1nion.j4msec.features.biometricauth.models.LockStatus { *; }
+-keep class com.jam1nion.j4msec.features.biometricauth.models.LockStatus$Locked { *; }
+-keep class com.jam1nion.j4msec.features.biometricauth.models.LockStatus$Unlocked { *; }
 
 
 -keep class com.jam1nion.j4msec.features.biometricauth.BiometricAuthenticationManager$DefaultImpls { *; }

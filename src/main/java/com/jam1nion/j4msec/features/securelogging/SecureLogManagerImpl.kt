@@ -31,7 +31,7 @@ internal class SecureLogManagerImpl : SecureLogManager {
     private var defaultLogScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var logScope: CoroutineScope ? = null
 
-    override fun init(context: Context, logScope: CoroutineScope ?, logDirectory : File?, logFileName: String?){
+    fun init(context: Context, logScope: CoroutineScope ?, logDirectory : File?, logFileName: String?){
         this.logScope = logScope ?: defaultLogScope
         logFile = File(logDirectory ?: context.filesDir, logFileName ?: LOG_FILE_NAME)
         key = CryptoUtils.getLoggingSecretKey()

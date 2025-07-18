@@ -7,7 +7,6 @@ import java.io.File
 
 interface SecureLogManager {
 
-    fun init(context: Context, logScope: CoroutineScope ? = null, logDirectory : File? = null, logFileName: String ? = null)
     suspend fun logDeviceInfo()
     fun logAsync(tag: String, message: String, level : LoggingLevel = LoggingLevel.INFO)
     suspend fun log(tag: String, message: String, level : LoggingLevel = LoggingLevel.INFO)

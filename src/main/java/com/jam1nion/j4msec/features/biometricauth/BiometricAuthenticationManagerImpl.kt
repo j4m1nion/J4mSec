@@ -3,17 +3,22 @@ package com.jam1nion.j4msec.features.biometricauth
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleOwner
 import com.jam1nion.j4msec.R
 import com.jam1nion.j4msec.J4mSec
 import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockActivity
 import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockHostActivity
+import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockHostActivity.Companion.ONE_SHOT_ARGUMENT
 import com.jam1nion.j4msec.features.biometricauth.models.LockState
+import com.jam1nion.j4msec.features.biometricauth.models.LockStatus
 import com.jam1nion.j4msec.features.biometricauth.observers.BiometricAuthenticationLockObserver
 import com.jam1nion.j4msec.features.securelogging.models.LoggingLevel
+import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsErrors
 
 internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManager {
 
@@ -29,6 +34,10 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
     }
 
     private var lockObserver : BiometricAuthenticationLockObserver? = null
+
+    override fun observeLockStatus(owner: LifecycleOwner, handler: (LockStatus) -> Unit) {
+        LockState.lockStatus.observe(owner) { status -> handler.invoke(status) }
+    }
 
 
     override fun isBiometricAvailable(context: Context) : Boolean{
@@ -61,34 +70,8 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
         return deviceSecure
     }
 
-    override fun registerCallback(callback: BiometricLockCallback){
-        LockState.setCallback(callback)
-    }
 
-    override fun removeCallback(){
-        LockState.removeCallback()
-    }
-
-    override fun biometricAuth(context: Context){
-        val deviceSecure = isDeviceSecured(context)
-        if(deviceSecure){
-
-            Intent(context, BiometricAuthenticationLockActivity::class.java).run {
-                context.startActivity(this)
-            }
-        }
-
-        if(J4mSec.configuration.enableLogging){
-            J4mSec.secureLogManager?.logAsync(
-                TAG,
-                if(deviceSecure) "starting BiometricAuthenticationLockActivity" else "biometricAuth ignored since device is not secure.",
-                if(deviceSecure) LoggingLevel.INFO else LoggingLevel.SECURITY
-            )
-        }
-
-    }
-
-    override  fun biometricLock(context: Context){
+    override fun biometricLockBlocking(context: Context) {
         val deviceSecure = isDeviceSecured(context)
 
         if(deviceSecure) {
@@ -103,7 +86,29 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
                 TAG,
-                if(deviceSecure) "starting BiometricAuthenticationLockActivity" else "biometricAuth ignored since device is not secure.",
+                if(deviceSecure) "biometricLock starting BiometricAuthenticationLockActivity" else "biometricLock ignored since device is not secure.",
+                if(deviceSecure) LoggingLevel.INFO else LoggingLevel.SECURITY
+            )
+        }
+    }
+
+    override  fun biometricLock(context: Context){
+        val deviceSecure = isDeviceSecured(context)
+
+        if(deviceSecure) {
+            Intent(
+                context.applicationContext,
+                BiometricAuthenticationLockHostActivity::class.java
+            ).run {
+                putExtras(Bundle().apply { putBoolean(ONE_SHOT_ARGUMENT, true)})
+                context.startActivity(this)
+            }
+        }
+
+        if(J4mSec.configuration.enableLogging){
+            J4mSec.secureLogManager?.logAsync(
+                TAG,
+                if(deviceSecure) "biometricLockBlocking starting BiometricAuthenticationLockActivity" else "biometricLockBlocking ignored since device is not secure.",
                 if(deviceSecure) LoggingLevel.INFO else LoggingLevel.SECURITY
             )
         }
@@ -147,17 +152,14 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
     }
 
 
-    override fun appLock(context: Context, delay: Long, callback: BiometricLockCallback ?){
+    override fun appLock(context: Context, delay: Long){
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
                 TAG,
-                "appLock requested with callback: $callback",
+                "appLock requested",
                 LoggingLevel.INFO
             )
         }
-
-
-        LockState.setCallback(callback)
 
         if(lockObserver == null){
             lockObserver = BiometricAuthenticationLockObserver(
