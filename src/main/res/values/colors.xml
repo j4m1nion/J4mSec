@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="biometric_auth_lock_background">#CC000000</color>
+    <color name="biometric_auth_lock_retry_background_tint">@android:color/transparent</color>
+    <color name="biometric_auth_lock_retry_tint">#1f1f1f</color>
+</resources>

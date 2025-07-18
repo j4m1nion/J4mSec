@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/biometric_auth_lock_background">
+
+    <ImageButton
+        android:id="@+id/biometric_retry_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:visibility="visible"
+        android:background="@drawable/biometric_auth_lock_background"
+        android:backgroundTint="@color/biometric_auth_lock_retry_background_tint"
+        android:contentDescription="@string/auth_retry_cd"
+        android:src="@drawable/biometric_auth_lock_ic"
+        app:tint="@color/biometric_auth_lock_retry_tint"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

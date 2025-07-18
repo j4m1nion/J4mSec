@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">J4mSec</string>
+    <string name="auth_biometric_title">Biometric Authentication</string>
+    <string name="auth_biometric_subtitle">Log in using your biometric credential</string>
+    <string name="auth_retry_button">Retry to authenticate</string>
+    <string name="auth_retry_cd">Authenticate to use the app</string>
+</resources>
