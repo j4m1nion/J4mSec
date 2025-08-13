@@ -8,6 +8,7 @@ import com.jam1nion.j4msec.features.biometricauth.models.LockStatus
 interface BiometricAuthenticationManager {
 
     fun observeLockStatus(owner: LifecycleOwner, handler: (LockStatus) -> Unit)
+    fun removeObserver(owner: LifecycleOwner)
     fun isBiometricAvailable(context: Context) : Boolean
     fun isDeviceSecured(context: Context) : Boolean
     fun biometricLock(context: Context)

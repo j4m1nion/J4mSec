@@ -39,6 +39,9 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
         LockState.lockStatus.observe(owner) { status -> handler.invoke(status) }
     }
 
+    override fun removeObserver(owner: LifecycleOwner) {
+        LockState.lockStatus.removeObservers(owner)
+    }
 
     override fun isBiometricAvailable(context: Context) : Boolean{
         val biometricManager = BiometricManager.from(context)
