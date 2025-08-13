@@ -9,6 +9,7 @@ interface SecureStrongSharedPrefsManager {
 
     fun observeErrors(owner: LifecycleOwner, handler: (SecureSharedPrefsErrors) -> Unit)
     fun observeAndAutoReset(owner: LifecycleOwner, coroutineScope: CoroutineScope)
+    fun removeObservers(owner: LifecycleOwner)
     fun checkKeyHealth() : SecureSharedPrefsKeyHealth
     fun putString(key: String, value : String, commit : Boolean = false)
     fun getString(key: String) : String?

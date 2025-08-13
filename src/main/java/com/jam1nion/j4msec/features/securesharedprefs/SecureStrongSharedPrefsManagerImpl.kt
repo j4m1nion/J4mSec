@@ -48,6 +48,10 @@ internal class SecureStrongSharedPrefsManagerImpl() : SecureStrongSharedPrefsMan
         }
     }
 
+    override fun removeObservers(owner: LifecycleOwner) {
+        errors.removeObservers(owner)
+    }
+
     override fun checkKeyHealth() : SecureSharedPrefsKeyHealth {
         return try {
             val encrypted = prefs?.getString(CHECK_STRONG_SECRET_KEY, null)

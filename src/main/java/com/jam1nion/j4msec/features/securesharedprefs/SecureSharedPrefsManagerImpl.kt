@@ -41,7 +41,9 @@ internal class SecureSharedPrefsManagerImpl() : SecureSharedPrefsManager {
         }
     }
 
-
+    override fun removeObservers(owner: LifecycleOwner) {
+        errors.removeObservers(owner)
+    }
 
     internal fun init(context: Context, name: String){
         this.prefs = context.getSharedPreferences(name, Context.MODE_PRIVATE)
