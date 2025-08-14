@@ -4,5 +4,6 @@ sealed class LockStatus {
 
     data object Locked : LockStatus()
     data object Unlocked : LockStatus()
+    data object DeviceUnsecure: LockStatus()
 
 }

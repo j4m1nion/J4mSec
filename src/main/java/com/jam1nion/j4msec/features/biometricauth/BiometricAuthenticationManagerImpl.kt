@@ -114,6 +114,9 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
                 context.startActivity(this)
             }
         }
+        else{
+            LockState.deviceUnsecure()
+        }
 
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(

@@ -26,4 +26,9 @@ internal object LockState {
         _lockStatus.postValue(LockStatus.Unlocked)
     }
 
+    internal fun deviceUnsecure(){
+        locked.set(false)
+        _lockStatus.postValue(LockStatus.DeviceUnsecure)
+    }
+
 }
