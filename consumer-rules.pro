@@ -22,6 +22,7 @@
 -keep class com.jam1nion.j4msec.features.biometricauth.models.LockStatus { *; }
 -keep class com.jam1nion.j4msec.features.biometricauth.models.LockStatus$Locked { *; }
 -keep class com.jam1nion.j4msec.features.biometricauth.models.LockStatus$Unlocked { *; }
+-keep class com.jam1nion.j4msec.features.biometricauth.models.LockStatus$DeviceUnsecure { *; }
 
 
 -keep class com.jam1nion.j4msec.features.biometricauth.BiometricAuthenticationManager$DefaultImpls { *; }
