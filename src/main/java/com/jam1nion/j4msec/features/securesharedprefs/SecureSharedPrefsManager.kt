@@ -1,12 +1,14 @@
 package com.jam1nion.j4msec.features.securesharedprefs
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsErrors
 import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsKeyHealth
 import kotlinx.coroutines.CoroutineScope
 
 interface SecureSharedPrefsManager {
 
+    fun getErrorsLD() : LiveData<SecureSharedPrefsErrors>
     fun observeErrors(owner: LifecycleOwner, handler: (SecureSharedPrefsErrors) -> Unit)
     fun observeAndAutoReset(owner: LifecycleOwner, coroutineScope: CoroutineScope)
     fun removeObservers(owner: LifecycleOwner)

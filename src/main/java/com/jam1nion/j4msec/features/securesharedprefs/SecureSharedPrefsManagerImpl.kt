@@ -27,6 +27,11 @@ internal class SecureSharedPrefsManagerImpl() : SecureSharedPrefsManager {
     private val _errors : MutableLiveData<SecureSharedPrefsErrors> = SingleLiveEvent()
     val errors: LiveData<SecureSharedPrefsErrors> = _errors
 
+
+    override fun getErrorsLD(): LiveData<SecureSharedPrefsErrors> {
+        return errors
+    }
+
     override fun observeErrors(owner: LifecycleOwner, handler: (SecureSharedPrefsErrors) -> Unit){
         errors.observe(owner) { error -> handler.invoke(error) }
     }

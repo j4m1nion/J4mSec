@@ -9,6 +9,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import com.jam1nion.j4msec.R
 import com.jam1nion.j4msec.J4mSec
 import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockActivity
@@ -19,6 +20,7 @@ import com.jam1nion.j4msec.features.biometricauth.models.LockStatus
 import com.jam1nion.j4msec.features.biometricauth.observers.BiometricAuthenticationLockObserver
 import com.jam1nion.j4msec.features.securelogging.models.LoggingLevel
 import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsErrors
+import okio.Lock
 
 internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManager {
 
@@ -34,6 +36,11 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
     }
 
     private var lockObserver : BiometricAuthenticationLockObserver? = null
+
+
+    override fun getLockStatusLD(): LiveData<LockStatus> {
+        return LockState.lockStatus
+    }
 
     override fun observeLockStatus(owner: LifecycleOwner, handler: (LockStatus) -> Unit) {
         LockState.lockStatus.observe(owner) { status -> handler.invoke(status) }
@@ -117,6 +124,9 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
         }
 
     }
+
+
+
     private fun buildPrompt(context: Context) = BiometricPrompt.PromptInfo.Builder()
         .setTitle(context.getString(R.string.auth_biometric_title))
         .setSubtitle(context.getString(R.string.auth_biometric_subtitle))

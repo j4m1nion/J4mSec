@@ -7,11 +7,13 @@ import androidx.core.content.edit
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
 import com.jam1nion.j4msec.arch.SingleLiveEvent
 import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsErrors
 import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsKeyHealth
 import com.jam1nion.j4msec.features.utils.CryptoUtils
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.security.InvalidKeyException
 
@@ -33,6 +35,9 @@ internal class SecureStrongSharedPrefsManagerImpl() : SecureStrongSharedPrefsMan
         this.authenticationTimeoutSec = authenticationTimeoutSec
     }
 
+    override fun getErrorsLD(): LiveData<SecureSharedPrefsErrors> {
+        return errors
+    }
 
     override fun observeErrors(owner: LifecycleOwner, handler: (SecureSharedPrefsErrors) -> Unit){
         errors.observe(owner) { error -> handler.invoke(error) }

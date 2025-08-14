@@ -3,10 +3,12 @@ package com.jam1nion.j4msec.features.biometricauth
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import com.jam1nion.j4msec.features.biometricauth.models.LockStatus
 
 interface BiometricAuthenticationManager {
 
+    fun getLockStatusLD(): LiveData<LockStatus>
     fun observeLockStatus(owner: LifecycleOwner, handler: (LockStatus) -> Unit)
     fun removeObserver(owner: LifecycleOwner)
     fun isBiometricAvailable(context: Context) : Boolean
