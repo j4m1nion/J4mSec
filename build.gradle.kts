@@ -58,7 +58,7 @@ publishing {
                 from(components["release"])
                 groupId = "com.github.j4m1nion"
                 artifactId = "j4msec"
-                version = "1.0.6"
+                version = "1.0.7"
             }
         }
     }
