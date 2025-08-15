@@ -4,6 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.jam1nion.j4msec.J4mSec
+import com.jam1nion.j4msec.features.biometricauth.BiometricAuthenticationManager
 import com.jam1nion.j4msec.features.biometricauth.models.LockState
 import com.jam1nion.j4msec.features.securelogging.models.LoggingLevel
 
@@ -14,6 +15,7 @@ internal class BiometricAuthenticationLockObserver(
 
     companion object{
         const val TAG = "BiometricAuthenticationLockObserver"
+        const val LOCK_OBSERVER_REQUEST_ID = 222
     }
 
     private var lockTime : Long = 0L
@@ -114,6 +116,6 @@ internal class BiometricAuthenticationLockObserver(
         }
         super.onStop(owner)
         lockTime = System.currentTimeMillis()
-        LockState.lock()
+        LockState.lock(LOCK_OBSERVER_REQUEST_ID)
     }
 }

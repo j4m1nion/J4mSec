@@ -10,23 +10,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asFlow
 import com.jam1nion.j4msec.R
 import com.jam1nion.j4msec.J4mSec
-import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockActivity
+import com.jam1nion.j4msec.features.biometricauth.BiometricAuthenticationManager.Companion.DEFAULT_REQUEST_ID
 import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockHostActivity
 import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockHostActivity.Companion.ONE_SHOT_ARGUMENT
+import com.jam1nion.j4msec.features.biometricauth.activities.BiometricAuthenticationLockHostActivity.Companion.REQUEST_ID
 import com.jam1nion.j4msec.features.biometricauth.models.LockState
 import com.jam1nion.j4msec.features.biometricauth.models.LockStatus
 import com.jam1nion.j4msec.features.biometricauth.observers.BiometricAuthenticationLockObserver
 import com.jam1nion.j4msec.features.securelogging.models.LoggingLevel
-import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsErrors
-import okio.Lock
+import kotlinx.coroutines.flow.Flow
 
 internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManager {
-
-    companion object{
-        private const val TAG = "BiometricAuthenticationManager"
-    }
 
 
     enum class BiometricAuthenticationResponse(val resultCode: Int){
@@ -37,6 +34,10 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
 
     private var lockObserver : BiometricAuthenticationLockObserver? = null
 
+
+    override fun getLockStatusFLow(): Flow<LockStatus> {
+        return LockState.lockStatus.asFlow()
+    }
 
     override fun getLockStatusLD(): LiveData<LockStatus> {
         return LockState.lockStatus
@@ -56,7 +57,7 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
 
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
-                TAG,
+                BiometricAuthenticationManager.TAG,
                 "Biometric login is available: $biometricAvailable",
                 LoggingLevel.SECURITY
             )
@@ -71,7 +72,7 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
 
         if (J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
-                TAG,
+                BiometricAuthenticationManager.TAG,
                 "Device is secure: $deviceSecure",
                 LoggingLevel.SECURITY
             )
@@ -81,46 +82,55 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
     }
 
 
-    override fun biometricLockBlocking(context: Context) {
+    override fun biometricLockBlocking(context: Context, requestId: Int ?, callback: BiometricAuthenticationCallback ?) {
         val deviceSecure = isDeviceSecured(context)
 
         if(deviceSecure) {
+            LockState.registerCallback(callback)
             Intent(
                 context.applicationContext,
                 BiometricAuthenticationLockHostActivity::class.java
             ).run {
+                putExtras(Bundle().apply { putInt(REQUEST_ID, requestId ?: DEFAULT_REQUEST_ID)})
                 context.startActivity(this)
             }
+        }
+        else{
+            callback?.onUnlockedNotPossible()
+            LockState.deviceUnsecure(requestId ?: DEFAULT_REQUEST_ID)
         }
 
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
-                TAG,
+                BiometricAuthenticationManager.TAG,
                 if(deviceSecure) "biometricLock starting BiometricAuthenticationLockActivity" else "biometricLock ignored since device is not secure.",
                 if(deviceSecure) LoggingLevel.INFO else LoggingLevel.SECURITY
             )
         }
     }
 
-    override  fun biometricLock(context: Context){
+    override  fun biometricLock(context: Context, requestId: Int ?, callback: BiometricAuthenticationCallback ?){
         val deviceSecure = isDeviceSecured(context)
 
         if(deviceSecure) {
+            LockState.registerCallback(callback)
             Intent(
                 context.applicationContext,
                 BiometricAuthenticationLockHostActivity::class.java
             ).run {
                 putExtras(Bundle().apply { putBoolean(ONE_SHOT_ARGUMENT, true)})
+                putExtras(Bundle().apply { putInt(REQUEST_ID, requestId ?: DEFAULT_REQUEST_ID)})
                 context.startActivity(this)
             }
         }
         else{
-            LockState.deviceUnsecure()
+            callback?.onUnlockedNotPossible()
+            LockState.deviceUnsecure(requestId ?: DEFAULT_REQUEST_ID)
         }
 
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
-                TAG,
+                BiometricAuthenticationManager.TAG,
                 if(deviceSecure) "biometricLockBlocking starting BiometricAuthenticationLockActivity" else "biometricLockBlocking ignored since device is not secure.",
                 if(deviceSecure) LoggingLevel.INFO else LoggingLevel.SECURITY
             )
@@ -171,7 +181,7 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
     override fun appLock(context: Context, delay: Long){
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
-                TAG,
+                BiometricAuthenticationManager.TAG,
                 "appLock requested",
                 LoggingLevel.INFO
             )
@@ -193,7 +203,7 @@ internal class BiometricAuthenticationManagerImpl : BiometricAuthenticationManag
     override fun appUnlock(){
         if(J4mSec.configuration.enableLogging){
             J4mSec.secureLogManager?.logAsync(
-                TAG,
+                BiometricAuthenticationManager.TAG,
                 "appUnlock requested.",
                 LoggingLevel.INFO
             )

@@ -19,7 +19,6 @@ internal class BiometricAuthenticationLockActivity : AppCompatActivity() {
 
         binding = ActivityBiometricAuthenticationLockBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        LockState.lock()
         setupRetryButton()
         showBiometricPrompt()
     }
@@ -39,7 +38,6 @@ internal class BiometricAuthenticationLockActivity : AppCompatActivity() {
                 context = this,
                 fragmentActivity = this,
                 onSuccess = {
-                    LockState.unlock()
                     setResult(BiometricAuthenticationManagerImpl.BiometricAuthenticationResponse.SUCCESS.resultCode)
                     finish()
                 },

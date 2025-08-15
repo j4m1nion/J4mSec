@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.jam1nion.j4msec.J4mSec
+import com.jam1nion.j4msec.features.biometricauth.BiometricAuthenticationManager
 import com.jam1nion.j4msec.features.biometricauth.BiometricAuthenticationManagerImpl
 import com.jam1nion.j4msec.features.biometricauth.models.LockState
 import com.jam1nion.j4msec.features.securelogging.models.LoggingLevel
@@ -15,6 +16,7 @@ internal class BiometricAuthenticationLockHostActivity : AppCompatActivity() {
     companion object{
         const val TAG = "BiometricAuthenticationLockHostActivity"
         const val ONE_SHOT_ARGUMENT = "one_shot"
+        const val REQUEST_ID = "request_id"
     }
 
     private val biometricLauncher = registerForActivityResult(
@@ -22,7 +24,7 @@ internal class BiometricAuthenticationLockHostActivity : AppCompatActivity() {
     ) { result ->
         when{
             result.resultCode == BiometricAuthenticationManagerImpl.BiometricAuthenticationResponse.SUCCESS.resultCode -> {
-                LockState.unlock()
+                LockState.unlock(intent?.getIntExtra(REQUEST_ID, BiometricAuthenticationManager.DEFAULT_REQUEST_ID) ?: BiometricAuthenticationManager.DEFAULT_REQUEST_ID)
                 finish()
             }
             intent?.getBooleanExtra(ONE_SHOT_ARGUMENT, false) == true -> finish()
@@ -43,10 +45,17 @@ internal class BiometricAuthenticationLockHostActivity : AppCompatActivity() {
             }
             finish()
         }
+        LockState.lock(intent?.getIntExtra(REQUEST_ID, BiometricAuthenticationManager.DEFAULT_REQUEST_ID) ?: BiometricAuthenticationManager.DEFAULT_REQUEST_ID)
         launchLockActivity()
     }
 
     fun launchLockActivity(){
         biometricLauncher.launch(Intent(this, BiometricAuthenticationLockActivity::class.java))
+    }
+
+
+    override fun finish() {
+        super.finish()
+        LockState.callbackResultToConsumer()
     }
 }

@@ -13,6 +13,7 @@ import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsEr
 import com.jam1nion.j4msec.features.securesharedprefs.models.SecureSharedPrefsKeyHealth
 import com.jam1nion.j4msec.features.utils.CryptoUtils
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.security.InvalidKeyException
@@ -37,6 +38,10 @@ internal class SecureStrongSharedPrefsManagerImpl() : SecureStrongSharedPrefsMan
 
     override fun getErrorsLD(): LiveData<SecureSharedPrefsErrors> {
         return errors
+    }
+
+    override fun getErrorsFlow(): Flow<SecureSharedPrefsErrors> {
+        return errors.asFlow()
     }
 
     override fun observeErrors(owner: LifecycleOwner, handler: (SecureSharedPrefsErrors) -> Unit){
